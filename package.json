@@ -1,0 +1,26 @@
+{
+  "name": "food_order_backend",
+  "version": "1.0.0",
+  "description": "Food Order App Backend (Mobile App REST API and Admin Console Functionality)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/app.js"
+  },
+  "keywords": [
+    "Food",
+    "Order",
+    "App",
+    "Backend"
+  ],
+  "author": "Jayanta Gogoi",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.7",
+    "nodemon": "^2.0.3"
+  }
+}
