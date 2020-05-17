@@ -11,18 +11,36 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  cart: {
-    foods: [
-      {
-        productId: {
-          type: Schema.Types.ObjectId,
-          ref: "Product",
-          required: true,
-        },
-        itemCount: { type: Number, require: true },
-      },
-    ],
+  firstName: {
+    type: String,
   },
+  lastName: {
+    type: String,
+  },
+  address: {
+    type: String,
+  },
+  phone: {
+    type: String,
+  },
+  lat: {
+    type: Number,
+  },
+  lng: {
+    type: Number,
+  },
+  cart: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Food",
+    },
+  ],
+  order: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Order",
+    },
+  ],
 });
 
 module.exports = mongoose.model("User", userSchema);

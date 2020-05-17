@@ -14,6 +14,9 @@ const productSchema = new Schema({
   category: {
     type: String,
   },
+  readyTime: {
+    type: Number,
+  },
   rating: {
     rate: Number,
   },
@@ -21,9 +24,9 @@ const productSchema = new Schema({
     type: Number,
     required: true,
   },
-  image: {
-    type: String,
+  images: {
+    type: [String],
   },
 });
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model("Food", productSchema);

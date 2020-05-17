@@ -7,6 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon src/app.js"
   },
+  "engines": {
+    "node": "12.16.1",
+    "npm": "6.13.4"
+  },
   "keywords": [
     "Food",
     "Order",
@@ -18,9 +22,13 @@
   "dependencies": {
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
     "express": "^4.17.1",
+    "express-validator": "^6.4.1",
+    "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.7",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.3"
   }
 }

@@ -1,19 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const userAuth = require("../middlewares/userAuthCheck");
+const auth = require("../middlewares/adminAuth");
 const AppError = require("../controllers/errorController");
-const shopController = require("../controllers/shopController");
 const adminController = require("../controllers/adminController");
 
 /**
  * PRIVATE ROUTES [Authorization required]
  */
-router.post("/add-product", userAuth, adminController.addProduct);
+router.post("/add-restaurant", adminController.addRestaurant);
 
-/**
- * PUBLIC ROUTES
- */
-router.get("/", shopController.getAvailableFoods);
+router.post("/add-food/:id", adminController.addFood);
+
+router.get("/view-restaurants", adminController.viewAllRestaurant);
 
 router.use(AppError.onInvalidEndpoint);
 
