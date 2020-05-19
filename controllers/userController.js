@@ -15,11 +15,14 @@ exports.onSignup = (req, res, next) => {
     const err = new Error("Validation Erro");
     err.statusCode = 422;
     err.data = errors.array();
-    throw err;
+    next(err);
+    return;
   }
 
   let email = req.body.email;
   let password = req.body.password;
+  let firstName = req.body.firstName;
+  let lastName = req.body.lastName;
 
   bcrypt
     .hash(password, 12)
@@ -27,8 +30,8 @@ exports.onSignup = (req, res, next) => {
       const user = new User({
         email: email,
         password: hashPassword,
-        firstName: "",
-        lastName: "",
+        firstName: firstName,
+        lastName: lastName,
         address: null,
         phone: null,
         lat: null,
@@ -39,8 +42,14 @@ exports.onSignup = (req, res, next) => {
 
       return user.save();
     })
-    .then((result) => {
-      res.status(201).json({ msg: "Signup Successfully!", userId: result._id });
+    .then((user) => {
+      const token = jwt.sign(
+        { userId: user._id.toString(), email: user.email },
+        APP_KEY,
+        { expiresIn: "90d" }
+      );
+
+      res.status(200).json(token);
     })
     .catch((err) => {
       if (!err.statusCode) {
@@ -102,7 +111,7 @@ exports.getCart = (req, res, next) => {
   const userId = req.userId;
 
   User.findById(userId)
-    .populate("cart")
+    .populate("cart.food")
     .then((user) => {
       res.status(200).json(user.cart);
     })
@@ -118,16 +127,43 @@ exports.addToCart = (req, res, next) => {
   const userId = req.userId;
   const foodId = req.params.id;
 
+  console.log("Going through");
+
   let currentUser;
   User.findById(userId)
-    .populate("cart")
+    .populate("cart.food")
     .then((user) => {
       currentUser = user;
       return Food.findById(foodId);
     })
     .then((food) => {
-      currentUser.cart.push(food);
-      return currentUser.save();
+      return currentUser.addToCart(food);
+    })
+    .then((result) => {
+      res.status(200).json(result.cart);
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+exports.editCart = (req, res, next) => {
+  const userId = req.userId;
+  const foodId = req.params.id;
+  const qty = req.params.qty;
+
+  let currentUser;
+  User.findById(userId)
+    .populate("cart.food")
+    .then((user) => {
+      currentUser = user;
+      return Food.findById(foodId);
+    })
+    .then((food) => {
+      return currentUser.editCart(food, qty);
     })
     .then((result) => {
       res.status(200).json(result.cart);
@@ -174,22 +210,25 @@ exports.getSelectedOrder = (req, res, next) => {
 
 exports.addOrder = (req, res, next) => {
   const userId = req.userId;
-
   const orderId = `${Math.floor(Math.random() * 89999 + 1000)}`;
   let currentUser;
   let total = 0;
   User.findById(userId)
     .populate("order")
-    .populate("cart")
+    .populate("cart.food")
     .then((user) => {
       currentUser = user;
-      let items = user.cart;
-      items.map((item) => {
-        total += parseInt(item.price);
+      let orderedItems = [];
+      user.cart.map((item) => {
+        let qty = item.qty;
+        let price = item.food.price;
+        total += qty * price;
+        orderedItems.push(item.food);
       });
+
       let order = new Order({
         orderID: orderId,
-        items: items,
+        items: orderedItems,
         totalAmount: total,
         orderDate: new Date(),
         paidThrough: "",
@@ -217,9 +256,36 @@ exports.viewProfile = (req, res, next) => {
 
   User.findById(userId)
     .select("-password")
-    .populate("cart")
-    .populate("order")
-    .then((result) => res.status(200).json(result))
+    .then((user) => {
+      res.status(200).json(user);
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+exports.editAddress = (req, res, next) => {
+  const userId = req.userId;
+  const address = req.body.address;
+  const lat = req.body.lat;
+  const lng = req.body.lng;
+  const phone = req.body.phone;
+
+  User.findById(userId)
+    .select("-password")
+    .then((user) => {
+      user.address = address;
+      user.phone = phone;
+      user.lat = lat;
+      user.lng = lng;
+      return user.save();
+    })
+    .then((result) => {
+      res.status(200).json(result);
+    })
     .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;

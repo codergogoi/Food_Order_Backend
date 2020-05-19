@@ -31,17 +31,13 @@ exports.getAvailableFoods = (req, res, next) => {
  * Get Top 10 restaurants in specified Area
  */
 exports.getTopRestaurants = (req, res, next) => {
-  // const pinCode = req.params.id;
-
   Restaurant.find()
     .populate("foods")
-    .limit(10)
-    .then((restaurants) => {
-      res.status(200).json(restaurants);
+    .then((result) => {
+      res.status(200).json(result);
     })
     .catch((err) => {
-      err.statusCode = 503;
-      next(err);
+      return AppError.onError(res, "restaurant add error" + err);
     });
 };
 

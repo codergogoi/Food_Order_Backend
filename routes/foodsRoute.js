@@ -11,7 +11,7 @@ router.get("/in-30-min", foodController.getInThirtyMinutes);
 
 router.get("/:id", foodController.getFoodDetails);
 
-router.get("/top-restaurants", foodController.getTopRestaurants);
+router.get("/top/restaurants", foodController.getTopRestaurants);
 
 router.get("/restaurant/:id", foodController.getAllFoodsFromRestaurant);
 

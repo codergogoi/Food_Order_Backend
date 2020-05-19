@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const User = require("../models/user");
 const userController = require("../controllers/userController");
 const { body } = require("express-validator");
@@ -43,9 +43,11 @@ router.post(
   userController.onLogin
 );
 
-router.get("/cart", auth, userController.getCart);
+router.put("/cart/:id/:qty", auth, userController.editCart);
 
 router.post("/cart/:id", auth, userController.addToCart);
+
+router.get("/cart", auth, userController.getCart);
 
 router.get("/order", auth, userController.getOrder);
 
@@ -54,5 +56,7 @@ router.get("/order/:id", auth, userController.getSelectedOrder);
 router.post("/add-order", auth, userController.addOrder);
 
 router.get("/profile", auth, userController.viewProfile);
+
+router.post("/address", auth, userController.editAddress);
 
 module.exports = router;

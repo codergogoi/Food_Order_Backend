@@ -1,6 +1,4 @@
 const path = require("path");
-const fs = require("fs");
-
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -34,35 +32,27 @@ mongoose
   })
   .then(() => {})
   .catch((err) => {
-    return AppError.onError(res, err);
+    console.log(err);
   });
-
-const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
-  {
-    flags: "a",
-  }
-);
 
 /**
  * Middlewares
  */
+
 app.use(helmet());
 app.use(compression());
-app.use(morgan("combined", { stream: accessLogStream }));
 app.use(bodyParser.json());
+app.use("/images", express.static(path.join(__dirname, "images")));
+
 app.use("/user", userRoutes); // --- User Acccess
 app.use("/food", foodRoutes); // -- Product Access
 app.use("/admin", adminRoutes); // --- Admin Access
-app.use("/", (req, res, next) => {
-  res
-    .status(403)
-    .json(
-      "Resource Access Only Available through Authenticated Endpoints Only"
-    );
-});
 app.use(AppError.unAuthorised); // -- Error Handler
 
-const PORT = process.env.PORT || 8000;
+app.use((error, req, res, next) => {
+  const status = error.statusCode || 500;
+  const data = error.data;
+  res.status(status).json({ data: data });
+});
 
-app.listen(PORT);
+const PORT = process.env.PORT || 8000;
