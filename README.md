@@ -6,9 +6,15 @@ The Missing Piece to run the application:
 
 1. Mongo DB access through https://cloud.mongodb.com/
 2. User Credential which is encaptulated due to maintain Security.
-   Create AppConst.js file and add the following:
-   exports.MONGODB_URI =
-   "mongodb+srv://your_mongodb_url/online_foods";
+
+   Create -> AppConst.js
+   add the following:
+   exports.MONGODB_URI ="mongodb+srv://your_mongodb_url/online_foods";
+
    exports.APP_KEY = "APP_ACCESS_KEY";
 
    The front End part is devided into two section Web App [REACT JS] and Mobile App [REACT NATIVE] you can find the front end source code in my repositoy list.
+
+   Post Man COllections for API Testing Part:
+
+   https://documenter.getpostman.com/view/8734310/Szt5fBTP?version=latest
